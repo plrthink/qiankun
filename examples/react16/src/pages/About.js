@@ -1,9 +1,6 @@
 import React from 'react';
+import './About.css';
 
 export default function() {
-  return (
-    <h2 className="app-nav-item" style={{ borderColor: 'green' }}>
-      About
-    </h2>
-  );
+  return <h2 className="app-nav-item">About</h2>;
 }

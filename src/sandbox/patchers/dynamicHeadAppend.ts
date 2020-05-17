@@ -4,7 +4,7 @@
  */
 import { execScripts } from 'import-html-entry';
 import { isFunction } from 'lodash';
-import { checkActivityFunctions } from 'single-spa';
+// import { checkActivityFunctions } from 'single-spa';
 import { frameworkConfiguration } from '../../apis';
 import { Freer } from '../../interfaces';
 import { getTargetValue, setProxyPropertyGetter } from '../common';
@@ -52,7 +52,7 @@ function getNewAppendChild(...args: any[]) {
     const element = newChild as any;
     if (element.tagName) {
       // eslint-disable-next-line prefer-const
-      let [appName, appWrapperGetter, proxy, singular, dynamicStyleSheetElements] = args;
+      let [, /* appName */ appWrapperGetter, proxy, singular, dynamicStyleSheetElements] = args;
 
       const storedContainerInfo = element[attachProxySymbol];
       if (storedContainerInfo) {
@@ -86,13 +86,13 @@ function getNewAppendChild(...args: any[]) {
           // This scenario may cause we record the stylesheet from react routing page dynamic injection,
           // and remove them after the url change triggered and qiankun app is unmouting
           // see https://github.com/ReactTraining/history/blob/master/modules/createHashHistory.js#L222-L230
-          const activated = checkActivityFunctions(window.location).some(name => name === appName);
-          // only hijack dynamic style injection when app activated
-          if (activated) {
-            dynamicStyleSheetElements.push(stylesheetElement);
+          // const activated = checkActivityFunctions(window.location).some(name => name === appName);
+          // // only hijack dynamic style injection when app activated
+          // if (activated) {
+          //   dynamicStyleSheetElements.push(stylesheetElement);
 
-            return rawAppendChild.call(appWrapperGetter(), stylesheetElement) as T;
-          }
+          //   return rawAppendChild.call(appWrapperGetter(), stylesheetElement) as T;
+          // }
 
           return rawHeadAppendChild.call(this, element) as T;
         }
@@ -179,7 +179,7 @@ function getNewInsertBefore(...args: any[]) {
     const element = newChild as any;
     if (element.tagName) {
       // eslint-disable-next-line prefer-const
-      let [appName, appWrapperGetter, singular, dynamicStyleSheetElements] = args;
+      let [, /* appName */ appWrapperGetter, singular, dynamicStyleSheetElements] = args;
 
       const storedContainerInfo = element[attachProxySymbol];
       if (storedContainerInfo) {
@@ -203,15 +203,15 @@ function getNewInsertBefore(...args: any[]) {
             return rawAppendChild.call(appWrapperGetter(), stylesheetElement) as T;
           }
 
-          const activated = checkActivityFunctions(window.location).some(name => name === appName);
+          // const activated = checkActivityFunctions(window.location).some(name => name === appName);
 
-          if (activated) {
-            dynamicStyleSheetElements.push(stylesheetElement);
-            const wrapper = appWrapperGetter();
-            const referenceNode = wrapper.contains(refChild) ? refChild : null;
+          // if (activated) {
+          //   dynamicStyleSheetElements.push(stylesheetElement);
+          //   const wrapper = appWrapperGetter();
+          //   const referenceNode = wrapper.contains(refChild) ? refChild : null;
 
-            return rawHeadInsertBefore.call(wrapper, stylesheetElement, referenceNode) as T;
-          }
+          //   return rawHeadInsertBefore.call(wrapper, stylesheetElement, referenceNode) as T;
+          // }
 
           return rawHeadInsertBefore.call(this, element, refChild) as T;
         }
@@ -253,7 +253,11 @@ export default function patch(
             return function createElement(tagName: string, options?: any) {
               const element = document.createElement(tagName, options);
 
-              if (tagName?.toLowerCase() === 'style' || tagName?.toLowerCase() === 'script') {
+              if (
+                tagName?.toLowerCase() === 'style' ||
+                tagName?.toLowerCase() === 'script' ||
+                tagName?.toLowerCase() === 'link'
+              ) {
                 Object.defineProperty(element, attachProxySymbol, {
                   value: { appName, proxy, appWrapperGetter, dynamicStyleSheetElements },
                   enumerable: false,

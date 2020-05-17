@@ -100,7 +100,7 @@ setDefaultMountApp('/react16');
 /**
  * Step4 启动应用
  */
-start();
+start({ singular: false });
 
 runAfterFirstMounted(() => {
   console.log('[MainApp] first app mounted');

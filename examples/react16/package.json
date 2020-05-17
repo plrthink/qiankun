@@ -9,7 +9,7 @@
     "react-router-dom": "^5.1.2"
   },
   "scripts": {
-    "start": "rescripts start",
+    "start": "npm run build && cd build && npx http-server -p 7100 --cors",
     "build": "rescripts build",
     "test": "rescripts test",
     "eject": "rescripts eject"
